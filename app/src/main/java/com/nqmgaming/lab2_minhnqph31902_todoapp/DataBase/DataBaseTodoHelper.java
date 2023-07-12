@@ -19,10 +19,11 @@ public class DataBaseTodoHelper extends SQLiteOpenHelper {
 
         //Create table todo include id, title, description, date, status
         String sql = "CREATE TABLE todo (\n" +
-                "                id INTEGER PRIMARY KEY,\n" +
+                "                id INTEGER  PRIMARY KEY AUTOINCREMENT,\n" +
                 "                title TEXT,\n" +
                 "                description TEXT,\n" +
                 "                date TEXT,\n" +
+                "                type TEXT,\n" +
                 "                status INTEGER\n" +
                 "        );";
 

@@ -5,16 +5,18 @@ public class TodoDTO {
     private String title;
     private String description;
     private String date;
+    private String type;
     private int status;
 
     public TodoDTO() {
     }
 
-    public TodoDTO(int id, String title, String description, String date, int status) {
+    public TodoDTO(int id, String title, String description, String date,String type, int status) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.date = date;
+        this.type = type;
         this.status = status;
     }
 
@@ -56,5 +58,13 @@ public class TodoDTO {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
