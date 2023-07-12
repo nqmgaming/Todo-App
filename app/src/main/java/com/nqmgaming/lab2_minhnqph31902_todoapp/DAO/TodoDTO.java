@@ -11,8 +11,7 @@ public class TodoDTO {
     public TodoDTO() {
     }
 
-    public TodoDTO(int id, String title, String description, String date,String type, int status) {
-        this.id = id;
+    public TodoDTO( String title, String description, String date,String type, int status) {
         this.title = title;
         this.description = description;
         this.date = date;

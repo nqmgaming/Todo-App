@@ -13,6 +13,12 @@
         android:theme="@style/Theme.Lab2_minhnqph31902_todoapp"
         tools:targetApi="31">
         <activity
+            android:name=".EditTodoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddTodoActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

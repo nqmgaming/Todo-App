@@ -104,4 +104,18 @@ public class TodoDAO {
         return todoDTOArrayList;
     }
 
+    //Update status
+    public int updateStatus(TodoDTO todoDTO) {
+        int result = -1;
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("status", todoDTO.getStatus());
+            String[] condition = new String[]{String.valueOf(todoDTO.getId())};
+            result = sqLiteDatabase.update("todo", contentValues, "id = ?", condition);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 }

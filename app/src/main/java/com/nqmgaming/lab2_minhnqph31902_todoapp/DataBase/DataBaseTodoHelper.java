@@ -28,7 +28,6 @@ public class DataBaseTodoHelper extends SQLiteOpenHelper {
                 "        );";
 
         db.execSQL(sql);
-
     }
 
     @Override
