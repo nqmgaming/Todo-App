@@ -1,18 +1,17 @@
 package com.nqmgaming.lab2_minhnqph31902_todoapp;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.Adapter.TodoAdapter;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 
 import java.util.ArrayList;
 
@@ -51,12 +50,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddTodoActivity.class);
-                startActivity(intent);
-            }
+        fabAdd.setOnClickListener(v -> {
+            Intent intent1 = new Intent(MainActivity.this, AddTodoActivity.class);
+            startActivity(intent1);
         });
     }
 
