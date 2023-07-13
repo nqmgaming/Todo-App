@@ -1,11 +1,11 @@
-package com.nqmgaming.lab2_minhnqph31902_todoapp.DTO;
+package com.nqmgaming.lab2_minhnqph31902_todoapp.DAO;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDTO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.DataBase.DataBaseTodoHelper;
 
 import java.util.ArrayList;
@@ -116,6 +116,28 @@ public class TodoDAO {
             e.printStackTrace();
         }
         return result;
+    }
+
+    //Get Todo by id
+    public TodoDTO getTodoById(int id) {
+        TodoDTO todoDTO = new TodoDTO();
+        try {
+            String sql = "SELECT * FROM todo WHERE id = " + id;
+            Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    todoDTO.setId(cursor.getInt(0));
+                    todoDTO.setTitle(cursor.getString(1));
+                    todoDTO.setDescription(cursor.getString(2));
+                    todoDTO.setDate(cursor.getString(3));
+                    todoDTO.setType(cursor.getString(4));
+                    todoDTO.setStatus(cursor.getInt(5));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return todoDTO;
     }
 
 }

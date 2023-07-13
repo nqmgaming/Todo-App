@@ -1,21 +1,24 @@
 package com.nqmgaming.lab2_minhnqph31902_todoapp;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDTO;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,7 +30,9 @@ public class AddTodoActivity extends AppCompatActivity {
     Button btnAdd, btnCancel;
     ImageView btnBack;
     TodoDAO todoDAO;
+    ConstraintLayout rootView;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,18 +50,26 @@ public class AddTodoActivity extends AppCompatActivity {
 
         btnBack = findViewById(R.id.ivBack);
 
-        View rootView = findViewById(android.R.id.content);
-        rootView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // Nếu người dùng chạm vào một vị trí khác ngoài EditText, ẩn bàn phím
-                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                return false;
-            }
+        rootView = findViewById(R.id.rootView);
+        rootView.setOnTouchListener((v, event) -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            return true;
         });
 
 
+        edtType.setOnClickListener(v -> {
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            builder.setTitle("Select Difficulty");
+            builder.setIcon(R.drawable.categorization);
+            String[] difficultyOptions = {"Easy", "Normal", "Hard"};
+            builder.setItems(difficultyOptions, (dialog, which) -> {
+                String selectedDifficulty = difficultyOptions[which];
+                edtType.setText(selectedDifficulty);
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        });
 
         edtDate.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
@@ -86,7 +99,11 @@ public class AddTodoActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
+            startActivity(intentToMain);
+            finish();
+        });
 
         btnAdd.setOnClickListener(v -> {
             try {
@@ -127,9 +144,9 @@ public class AddTodoActivity extends AppCompatActivity {
                 long result = todoDAO.insert(todoDTO);
                 if (result > 0) {
                     Toast.makeText(AddTodoActivity.this, "Add successfully", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(AddTodoActivity.this, MainActivity.class);
-                    intent.putExtra("done", 1);
-                    startActivity(intent);
+                    Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
+                    intentToMain.putExtra("isAdd", true);
+                    startActivity(intentToMain);
                     finish();
                 }
 
@@ -142,7 +159,6 @@ public class AddTodoActivity extends AppCompatActivity {
 
         btnCancel.setOnClickListener(v -> {
             Intent intent = new Intent(AddTodoActivity.this, MainActivity.class);
-            intent.putExtra("done", 0);
             startActivity(intent);
             finish();
         });

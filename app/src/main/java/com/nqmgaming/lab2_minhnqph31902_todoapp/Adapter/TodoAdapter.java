@@ -12,17 +12,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDTO;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDAO;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.EditTodoActivity;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.R;
 
 import java.util.ArrayList;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
-    TodoDTO todoDTO;
     TodoDAO todoDAO;
     private final Context context;
     private final ArrayList<TodoDTO> todoDTOArrayList;
@@ -52,6 +55,21 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
 
+        switch (todoDTO.getType()) {
+            case "Easy":
+                holder.constraintLayoutItem.setBackgroundResource(R.drawable.easy);
+                break;
+            case "Normal":
+                holder.constraintLayoutItem.setBackgroundResource(R.drawable.normal);
+                break;
+            case "Hard":
+                holder.constraintLayoutItem.setBackgroundResource(R.drawable.hard);
+                break;
+            default:
+                // Xử lý trường hợp không có sự khớp nào
+                break;
+        }
+
         holder.rbTodo.setOnClickListener(v -> {
             if (!holder.rbTodo.isChecked()) {
                 todoDTO.setStatus(0);
@@ -78,23 +96,36 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            todoDAO = new TodoDAO(context);
-            int result = todoDAO.delete(todoDTO);
-            if (result > 0) {
-                todoDTOArrayList.remove(position);
-                notifyDataSetChanged();
-                Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Delete fail", Toast.LENGTH_SHORT).show();
-            }
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+            builder.setTitle("Delete Todo");
+            builder.setMessage("Are you sure you want to delete this todo?");
+            builder.setIcon(R.drawable.delete);
+            builder.setPositiveButton("Delete", (dialog, which) -> {
+                // Xử lý khi người dùng chọn xóa
+                todoDAO = new TodoDAO(context);
+                int result = todoDAO.delete(todoDTO);
+                if (result > 0) {
+                    todoDTOArrayList.remove(position);
+                    notifyItemChanged(position);
+                    Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Delete fail", Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         });
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, EditTodoActivity.class);
-                intent.putExtra("position", position);
-                context.startActivity(intent);
-            }
+
+        holder.btnEdit.setOnClickListener(v -> {
+            Intent intent = new Intent(context, EditTodoActivity.class);
+            intent.putExtra("id", todoDTO.getId());
+            context.startActivity(intent);
+
+        });
+        holder.cardView.setOnClickListener(v -> {
+            String type = todoDTO.getType();
+            Toast.makeText(context,"Description: "  + type, Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -107,6 +138,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         TextView tvTitle, tvDate;
         CheckBox rbTodo;
         ImageButton btnEdit, btnDelete;
+        CardView cardView;
+        ConstraintLayout constraintLayoutItem;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -115,6 +148,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
             rbTodo = itemView.findViewById(R.id.rbTodo);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+            cardView = itemView.findViewById(R.id.cardView);
+            constraintLayoutItem = itemView.findViewById(R.id.constraintLayoutItem);
         }
     }
 }
