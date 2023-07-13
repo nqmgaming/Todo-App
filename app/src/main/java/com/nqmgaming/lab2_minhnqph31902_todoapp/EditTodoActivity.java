@@ -93,7 +93,14 @@ public class EditTodoActivity extends AppCompatActivity {
                     etDateEdit.setError("Date is required");
                     return;
                 }
-
+                if (title.trim().isEmpty()){
+                    etTitleEdit.setError("Title is required");
+                    return;
+                }
+                if (description.trim().isEmpty()){
+                    etDescriptionEdit.setError("Description is required");
+                    return;
+                }
                 try {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                     dateFormat.setLenient(false);

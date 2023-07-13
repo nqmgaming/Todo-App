@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -125,7 +126,10 @@ public class AddTodoActivity extends AppCompatActivity {
                     edtDate.setError("Date is required");
                     return;
                 }
-
+                if (title.isBlank()) {
+                    edtTitle.setError("Title is required");
+                    return;
+                }
                 try {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                     dateFormat.setLenient(false);
@@ -139,6 +143,15 @@ public class AddTodoActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (title.trim().isEmpty()){
+                    edtTitle.setError("Title is required");
+                    return;
+                }
+                if (description.trim().isEmpty()){
+                    edtDescription.setError("Description is required");
+                    return;
+                }
+
                 TodoDTO todoDTO = new TodoDTO(title, description, date, type, status);
                 todoDAO = new TodoDAO(AddTodoActivity.this);
                 long result = todoDAO.insert(todoDTO);
@@ -148,9 +161,9 @@ public class AddTodoActivity extends AppCompatActivity {
                     intentToMain.putExtra("isAdd", true);
                     startActivity(intentToMain);
                     finish();
+                } else {
+                    Toast.makeText(AddTodoActivity.this, "Add failed", Toast.LENGTH_SHORT).show();
                 }
-
-
             } catch (Exception e) {
                 // Xử lý ngoại lệ ở đây
                 e.printStackTrace();
