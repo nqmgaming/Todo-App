@@ -1,4 +1,4 @@
-package com.nqmgaming.lab2_minhnqph31902_todoapp.DAO;
+package com.nqmgaming.lab2_minhnqph31902_todoapp.DTO;
 
 public class TodoDTO {
     private int id;

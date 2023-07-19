@@ -1,30 +1,38 @@
 package com.nqmgaming.lab2_minhnqph31902_todoapp;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.Adapter.TodoAdapter;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDTO;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import nl.dionsegijn.konfetti.core.Party;
+import nl.dionsegijn.konfetti.core.emitter.Emitter;
+import nl.dionsegijn.konfetti.core.emitter.EmitterConfig;
+import nl.dionsegijn.konfetti.xml.KonfettiView;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerViewTodo;
     TodoAdapter todoAdapter;
     ArrayList<TodoDTO> todoArrayList;
-    TodoDAO todoDAO;
+    static TodoDAO todoDAO;
     FloatingActionButton fabAdd;
+
+    KonfettiView konfettiView;
+
+
+    private long backPressedTime; // Variable to track the last back button press time
+    private static final long DOUBLE_BACK_PRESS_TIMEOUT = 2000; // Timeout duration (in milliseconds)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerViewTodo = findViewById(R.id.rvTodoList);
         fabAdd = findViewById(R.id.fab);
+        konfettiView = findViewById(R.id.konfettiView);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -43,14 +52,39 @@ public class MainActivity extends AppCompatActivity {
         todoAdapter = new TodoAdapter(this, todoArrayList);
         recyclerViewTodo.setAdapter(todoAdapter);
 
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddTodoActivity.class);
-                startActivity(intent);
-            }
+        Intent intent = getIntent();
+        boolean isAdd = intent.getBooleanExtra("isAdd", false);
+        boolean isEdit = intent.getBooleanExtra("isEdit", false);
+        if (isAdd || isEdit) {
+            refreshList();
+        }
+
+
+        fabAdd.setOnClickListener(v -> {
+            Intent intent1 = new Intent(MainActivity.this, AddTodoActivity.class);
+            startActivity(intent1);
         });
 
+    }
+
+    private void refreshList() {
+        todoArrayList.clear();
+        todoArrayList.addAll(todoDAO.getAll());
+        todoAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Check if enough time has passed since the last back button press
+        if (backPressedTime + DOUBLE_BACK_PRESS_TIMEOUT > System.currentTimeMillis()) {
+            // If within the timeout duration, exit the app
+            super.onBackPressed();
+        } else {
+            // If not within the timeout duration, show a toast message
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        }
+
+        backPressedTime = System.currentTimeMillis(); // Update the last back button press time
     }
 
 

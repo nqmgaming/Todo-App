@@ -12,17 +12,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDTO;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.EditTodoActivity;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.R;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import io.github.cutelibs.cutedialog.CuteDialog;
+import nl.dionsegijn.konfetti.core.PartyFactory;
+import nl.dionsegijn.konfetti.core.emitter.Emitter;
+import nl.dionsegijn.konfetti.core.emitter.EmitterConfig;
+import nl.dionsegijn.konfetti.core.models.Shape;
+import nl.dionsegijn.konfetti.core.models.Size;
+import nl.dionsegijn.konfetti.xml.KonfettiView;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
-    TodoDTO todoDTO;
     TodoDAO todoDAO;
     private final Context context;
     private final ArrayList<TodoDTO> todoDTOArrayList;
@@ -41,16 +52,50 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int positions) {
+        int position = positions;
+
         TodoDTO todoDTO = todoDTOArrayList.get(position);
         holder.tvTitle.setText(todoDTO.getTitle());
         holder.tvDate.setText(todoDTO.getDate());
         holder.rbTodo.setChecked(todoDTO.getStatus() == 1);
         if (todoDTO.getStatus() == 1) {
+            holder.tvTitle.setTextColor(context.getResources().getColor(R.color.colorGray));
+
+            switch (todoDTO.getType()) {
+                case "Easy":
+                    holder.constraintLayoutItem.setBackgroundResource(R.drawable.easydone);
+                    break;
+                case "Normal":
+                    holder.constraintLayoutItem.setBackgroundResource(R.drawable.normaldone);
+                    break;
+                case "Hard":
+                    holder.constraintLayoutItem.setBackgroundResource(R.drawable.harddone);
+                    break;
+                default:
+                    break;
+            }
+
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
+            holder.tvTitle.setTextColor(context.getResources().getColor(R.color.black));
+            switch (todoDTO.getType()) {
+                case "Easy":
+                    holder.constraintLayoutItem.setBackgroundResource(R.drawable.easy);
+                    break;
+                case "Normal":
+                    holder.constraintLayoutItem.setBackgroundResource(R.drawable.normal);
+                    break;
+                case "Hard":
+                    holder.constraintLayoutItem.setBackgroundResource(R.drawable.hard);
+                    break;
+                default:
+                    break;
+            }
             holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
+
+
 
         holder.rbTodo.setOnClickListener(v -> {
             if (!holder.rbTodo.isChecked()) {
@@ -59,7 +104,23 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                 int result = todoDAO.updateStatus(todoDTO);
                 if (result > 0) {
                     Toast.makeText(context, "Update success", Toast.LENGTH_SHORT).show();
+                    holder.tvTitle.setTextColor(context.getResources().getColor(R.color.black));
+                    switch (todoDTO.getType()) {
+
+                        case "Easy":
+                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.easy);
+                            break;
+                        case "Normal":
+                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.normal);
+                            break;
+                        case "Hard":
+                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.hard);
+                            break;
+                        default:
+                            break;
+                    }
                 } else {
+
                     Toast.makeText(context, "Update fail", Toast.LENGTH_SHORT).show();
                 }
                 holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
@@ -68,6 +129,21 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                 todoDAO = new TodoDAO(context);
                 int result = todoDAO.updateStatus(todoDTO);
                 if (result > 0) {
+                    holder.tvTitle.setTextColor(context.getResources().getColor(R.color.colorGray));
+                    switch (todoDTO.getType()) {
+                        case "Easy":
+                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.easydone);
+                            break;
+                        case "Normal":
+                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.normaldone);
+                            break;
+                        case "Hard":
+                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.harddone);
+                            break;
+                        default:
+                            break;
+                    }
+
                     Toast.makeText(context, "Update success", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(context, "Update fail", Toast.LENGTH_SHORT).show();
@@ -78,23 +154,44 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         });
 
         holder.btnDelete.setOnClickListener(v -> {
-            todoDAO = new TodoDAO(context);
-            int result = todoDAO.delete(todoDTO);
-            if (result > 0) {
-                todoDTOArrayList.remove(position);
-                notifyDataSetChanged();
-                Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Delete fail", Toast.LENGTH_SHORT).show();
-            }
+            new CuteDialog.withAnimation(context)
+                    .setAnimation(R.raw.delete)
+                    .setTitle("Delete")
+                    .setDescription("Are you sure you want to delete this item?")
+                    .setNegativeButtonText("No", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    })
+                    .setPositiveButtonText("Yes", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            todoDAO = new TodoDAO(context);
+                            int result = todoDAO.delete(todoDTO);
+                            if (result > 0) {
+                                Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show();
+                                todoDTOArrayList.remove(position);
+                                notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(context, "Delete fail", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    })
+                    .show();
+
+
         });
-        holder.btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, EditTodoActivity.class);
-                intent.putExtra("position", position);
-                context.startActivity(intent);
-            }
+
+        holder.btnEdit.setOnClickListener(v -> {
+            Intent intent = new Intent(context, EditTodoActivity.class);
+            intent.putExtra("id", todoDTO.getId());
+            context.startActivity(intent);
+
+        });
+        holder.cardView.setOnClickListener(v -> {
+            String type = todoDTO.getType();
+            Toast.makeText(context, "Description: " + type, Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -107,6 +204,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
         TextView tvTitle, tvDate;
         CheckBox rbTodo;
         ImageButton btnEdit, btnDelete;
+        CardView cardView;
+        ConstraintLayout constraintLayoutItem;
+
+        KonfettiView konfettiView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -115,6 +216,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
             rbTodo = itemView.findViewById(R.id.rbTodo);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
+            cardView = itemView.findViewById(R.id.cardView);
+            constraintLayoutItem = itemView.findViewById(R.id.constraintLayoutItem);
+
+            konfettiView = itemView.findViewById(R.id.konfettiView);
+
         }
     }
+
 }

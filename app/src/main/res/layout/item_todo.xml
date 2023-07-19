@@ -4,13 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
+    android:background="#AB4848"
     android:layout_margin="5dp"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="10dp"
+    android:id="@+id/cardView">
+
+    <nl.dionsegijn.konfetti.xml.KonfettiView
+        android:id="@+id/konfettiView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#EBC996"
         android:padding="10dp">
 
         <CheckBox
@@ -18,18 +26,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/background_radio"
+            app:backgroundTint="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-
-            android:layout_width="250dp"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/rbTodo"
+            app:layout_constraintEnd_toStartOf="@id/constraintLayoutButton"
+            app:layout_constraintHorizontal_bias="0.134"
             app:layout_constraintStart_toEndOf="@+id/rbTodo"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/rbTodo"
+            app:layout_constraintVertical_bias="0.517">
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -50,6 +61,7 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -61,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:padding="10dp"
+                android:padding="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -72,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
                     android:background="@null"
+                    android:padding="5dp"
                     android:src="@drawable/edit" />
 
                 <ImageButton
@@ -79,6 +92,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
+                    android:importantForAccessibility="no"
+                    android:padding="5dp"
                     android:src="@drawable/delete" />
 
             </LinearLayout>
