@@ -32,6 +32,7 @@ public class EditTodoActivity extends AppCompatActivity {
     ImageView ivBackEdit;
     ConstraintLayout rootView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
