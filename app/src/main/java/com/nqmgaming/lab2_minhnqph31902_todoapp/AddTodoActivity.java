@@ -3,14 +3,18 @@ package com.nqmgaming.lab2_minhnqph31902_todoapp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -63,7 +67,7 @@ public class AddTodoActivity extends AppCompatActivity {
 
 
         edtType.setOnClickListener(v -> {
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Select Difficulty");
             builder.setIcon(R.drawable.categorization);
             String[] difficultyOptions = {"Easy", "Normal", "Hard"};
@@ -75,6 +79,8 @@ public class AddTodoActivity extends AppCompatActivity {
             alertDialog.show();
         });
 
+
+
         edtDate.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -84,20 +90,6 @@ public class AddTodoActivity extends AppCompatActivity {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
                     AddTodoActivity.this, (view, year1, month1, dayOfMonth) -> {
                 String selectedDate = year1 + "/" + (month1 + 1) + "/" + dayOfMonth;
-                edtDate.setText(selectedDate);
-            }, year, month, day);
-            datePickerDialog.show();
-        });
-
-        tilDate.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-            DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    AddTodoActivity.this, (view, year12, month12, dayOfMonth) -> {
-                String selectedDate = year12 + "/" + (month12 + 1) + "/" + dayOfMonth;
                 edtDate.setText(selectedDate);
             }, year, month, day);
             datePickerDialog.show();
@@ -163,6 +155,8 @@ public class AddTodoActivity extends AppCompatActivity {
                             .setAnimation(R.raw.successfull)
                             .setTitle("Add successfully")
                             .setDescription("Let's try your best to complete it!")
+                            .setTitleTextColor(R.color.black)
+                            .hideNegativeButton(true)
                             .setPositiveButtonText("OK", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
