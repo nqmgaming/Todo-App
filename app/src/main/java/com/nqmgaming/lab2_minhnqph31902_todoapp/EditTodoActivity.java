@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +22,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicReference;
-
-import io.github.cutelibs.cutedialog.CuteDialog;
 
 public class EditTodoActivity extends AppCompatActivity {
     EditText etTitleEdit, etDescriptionEdit, etDateEdit, etTypeEdit;
@@ -126,21 +123,11 @@ public class EditTodoActivity extends AppCompatActivity {
 
                 int result = todoDAO.update(todoDTO.get());
                 if (result > 0) {
-                    new CuteDialog.withAnimation(this)
-                            .setAnimation(R.raw.successfull)
-                            .setTitle("Update successfully")
-                            .setDescription("Let's try your best to complete it!")
-                            .setPositiveButtonText("OK", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intentToMain = new Intent(EditTodoActivity.this, MainActivity.class);
-                                    intentToMain.putExtra("isEdit", true);
-                                    startActivity(intentToMain);
-                                    finish();
-                                }
-                            })
-                            .show();
-
+                    Toast.makeText(EditTodoActivity.this, "Update successfully", Toast.LENGTH_SHORT).show();
+                    Intent intentToMain = new Intent(EditTodoActivity.this, MainActivity.class);
+                    intentToMain.putExtra("isEdit", true);
+                    startActivity(intentToMain);
+                    finish();
                 } else {
                     etTitleEdit.setError("Update failed");
                 }
