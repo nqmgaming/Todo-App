@@ -23,12 +23,15 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.UUID;
 
 import io.github.cutelibs.cutedialog.CuteDialog;
 
@@ -40,11 +43,15 @@ public class AddTodoActivity extends AppCompatActivity {
     TodoDAO todoDAO;
     ConstraintLayout rootView;
 
+    FirebaseFirestore database;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_todo);
+
+        database = FirebaseFirestore.getInstance();
 
         edtTitle = findViewById(R.id.etTitle);
         edtDescription = findViewById(R.id.etDescription);
@@ -80,7 +87,6 @@ public class AddTodoActivity extends AppCompatActivity {
         });
 
 
-
         edtDate.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -103,6 +109,7 @@ public class AddTodoActivity extends AppCompatActivity {
 
         btnAdd.setOnClickListener(v -> {
             try {
+                String idRandom = UUID.randomUUID().toString();
                 String title = edtTitle.getText().toString();
                 String description = edtDescription.getText().toString();
                 String date = edtDate.getText().toString();
@@ -147,31 +154,55 @@ public class AddTodoActivity extends AppCompatActivity {
                     return;
                 }
 
-                TodoDTO todoDTO = new TodoDTO(title, description, date, type, status);
-                todoDAO = new TodoDAO(AddTodoActivity.this);
-                long result = todoDAO.insert(todoDTO);
-                if (result > 0) {
-                    new CuteDialog.withAnimation(this)
-                            .setAnimation(R.raw.successfull)
-                            .setTitle("Add successfully")
-                            .setDescription("Let's try your best to complete it!")
-                            .setTitleTextColor(R.color.black)
-                            .hideNegativeButton(true)
-                            .setPositiveButtonText("OK", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
-                                    intentToMain.putExtra("isAdd", true);
-                                    startActivity(intentToMain);
-                                    finish();
-                                }
-                            })
-                            .show();
+                TodoDTO todoDTO = new TodoDTO(idRandom, title, description, date, type, status);
+                HashMap<String, Object> mapTodo = todoDTO.toHashMap();
 
+                database.collection("todos").document(idRandom)
+                        .set(mapTodo)
+                        .addOnSuccessListener(aVoid -> {
+                            new CuteDialog.withAnimation(this)
+                                    .setAnimation(R.raw.successfull)
+                                    .setTitle("Add successfully")
+                                    .setDescription("Let's try your best to complete it!")
+                                    .setTitleTextColor(R.color.black)
+                                    .hideNegativeButton(true)
+                                    .setPositiveButtonText("OK", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
+                                            intentToMain.putExtra("isAdd", true);
+                                            startActivity(intentToMain);
+                                            finish();
+                                        }
+                                    })
+                                    .show();
+                        })
+                        .addOnFailureListener(e -> Toast.makeText(AddTodoActivity.this, "Add failed", Toast.LENGTH_SHORT).show());
 
-                } else {
-                    Toast.makeText(AddTodoActivity.this, "Add failed", Toast.LENGTH_SHORT).show();
-                }
+//                todoDAO = new TodoDAO(AddTodoActivity.this);
+//                long result = todoDAO.insert(todoDTO);
+//                if (result > 0) {
+//                    new CuteDialog.withAnimation(this)
+//                            .setAnimation(R.raw.successfull)
+//                            .setTitle("Add successfully")
+//                            .setDescription("Let's try your best to complete it!")
+//                            .setTitleTextColor(R.color.black)
+//                            .hideNegativeButton(true)
+//                            .setPositiveButtonText("OK", new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
+//                                    intentToMain.putExtra("isAdd", true);
+//                                    startActivity(intentToMain);
+//                                    finish();
+//                                }
+//                            })
+//                            .show();
+//
+//
+//                } else {
+//                    Toast.makeText(AddTodoActivity.this, "Add failed", Toast.LENGTH_SHORT).show();
+//                }
             } catch (Exception e) {
                 // Xử lý ngoại lệ ở đây
                 e.printStackTrace();

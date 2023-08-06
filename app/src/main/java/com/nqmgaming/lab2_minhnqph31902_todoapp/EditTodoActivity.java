@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,13 +14,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.github.cutelibs.cutedialog.CuteDialog;
@@ -31,14 +30,17 @@ public class EditTodoActivity extends AppCompatActivity {
     Button btnCancelEdit, btnAddEdit;
     ImageView ivBackEdit;
     ConstraintLayout rootView;
-
+    FirebaseFirestore database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_todo);
+
+        database = FirebaseFirestore.getInstance();
+
         Intent intent = getIntent();
-        int id = intent.getIntExtra("id", -1);
+        String id = intent.getStringExtra("id");
 
         etTitleEdit = findViewById(R.id.etTitleEdit);
         etDescriptionEdit = findViewById(R.id.etDescriptionEdit);
@@ -68,16 +70,28 @@ public class EditTodoActivity extends AppCompatActivity {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         });
-        //Set data
-        TodoDAO todoDAO = new TodoDAO(this);
-        AtomicReference<TodoDTO> todoDTO = new AtomicReference<>(MainActivity.todoDAO.getTodoById(id));
-        etTitleEdit.setText(todoDTO.get().getTitle());
-        etDescriptionEdit.setText(todoDTO.get().getDescription());
-        etDateEdit.setText(todoDTO.get().getDate());
-        etTypeEdit.setText(todoDTO.get().getType());
-        int status = todoDTO.get().getStatus();
 
-        //Update data
+        AtomicReference<TodoDTO> todoDTOReference = new AtomicReference<>(new TodoDTO());
+
+        // Get data from Firebase
+        database.collection("todos").document(id).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        todoDTOReference.set(documentSnapshot.toObject(TodoDTO.class));
+                        etTitleEdit.setText(todoDTOReference.get().getTitle());
+                        etDescriptionEdit.setText(todoDTOReference.get().getDescription());
+                        etDateEdit.setText(todoDTOReference.get().getDate());
+                        etTypeEdit.setText(todoDTOReference.get().getType());
+
+                        int status = todoDTOReference.get().getStatus();
+                        // Now you have the 'status' value and you can use it wherever needed.
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                });
+
+        // Update data
         btnAddEdit.setOnClickListener(v -> {
             try {
                 String title = etTitleEdit.getText().toString();
@@ -116,37 +130,33 @@ public class EditTodoActivity extends AppCompatActivity {
                 if (type.isEmpty()) {
                     etTypeEdit.setError("Type is required");
                     return;
+
                 }
 
-                todoDTO.get().setTitle(title);
-                todoDTO.get().setDescription(description);
-                todoDTO.get().setDate(date);
-                todoDTO.get().setType(type);
-                todoDTO.get().setStatus(status);
+                int status = todoDTOReference.get().getStatus();
 
+                TodoDTO updatedTodoDTO = new TodoDTO(id, title, description, date, type, status);
+                HashMap<String, Object> mapTodo = updatedTodoDTO.toHashMap();
 
-                int result = todoDAO.update(todoDTO.get());
-                if (result > 0) {
-                    new CuteDialog.withAnimation(this)
-                            .setAnimation(R.raw.successfull)
-                            .setTitle("Update successfully")
-                            .setDescription("You have updated successfully")
-                            .hidePositiveButton(true)
-                            .setNegativeButtonText("OK", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intentToMain = new Intent(EditTodoActivity.this, MainActivity.class);
-                                    intentToMain.putExtra("isEdit", true);
-                                    startActivity(intentToMain);
-                                    finish();
-                                }
-                            })
-                            .show();
-
-
-                } else {
-                    etTitleEdit.setError("Update failed");
-                }
+                // Update to Firebase
+                database.collection("todos").document(id).update(mapTodo)
+                        .addOnSuccessListener(aVoid -> {
+                            new CuteDialog.withAnimation(EditTodoActivity.this)
+                                    .setAnimation(R.raw.successfull)
+                                    .setTitle("Update successfully")
+                                    .setDescription("You have updated successfully")
+                                    .hidePositiveButton(true)
+                                    .setNegativeButtonText("OK", v1 -> {
+                                        Intent intentToMain = new Intent(EditTodoActivity.this, MainActivity.class);
+                                        intentToMain.putExtra("isEdit", true);
+                                        startActivity(intentToMain);
+                                        finish();
+                                    })
+                                    .show();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(EditTodoActivity.this, "Update failed", Toast.LENGTH_SHORT).show();
+                        });
             } catch (Exception e) {
                 e.printStackTrace();
             }

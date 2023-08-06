@@ -17,6 +17,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.EditTodoActivity;
@@ -37,6 +40,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
     TodoDAO todoDAO;
     private final Context context;
     private final ArrayList<TodoDTO> todoDTOArrayList;
+    FirebaseFirestore database;
 
     public TodoAdapter(Context context, ArrayList<TodoDTO> todoDTOArrayList) {
         this.context = context;
@@ -53,6 +57,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int positions) {
+        database = FirebaseFirestore.getInstance();
         int position = positions;
 
         TodoDTO todoDTO = todoDTOArrayList.get(position);
@@ -99,56 +104,116 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
 
         holder.rbTodo.setOnClickListener(v -> {
             if (!holder.rbTodo.isChecked()) {
-                todoDTO.setStatus(0);
-                todoDAO = new TodoDAO(context);
-                int result = todoDAO.updateStatus(todoDTO);
-                if (result > 0) {
-                    Toast.makeText(context, "Update success", Toast.LENGTH_SHORT).show();
-                    holder.tvTitle.setTextColor(context.getResources().getColor(R.color.black));
-                    switch (todoDTO.getType()) {
+//                todoDTO.setStatus(0);
+//                todoDAO = new TodoDAO(context);
+//                int result = todoDAO.updateStatus(todoDTO);
+//                if (result > 0) {
+//                    Toast.makeText(context, "Update success", Toast.LENGTH_SHORT).show();
+//                    holder.tvTitle.setTextColor(context.getResources().getColor(R.color.black));
+//                    switch (todoDTO.getType()) {
+//
+//                        case "Easy":
+//                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.easy);
+//                            break;
+//                        case "Normal":
+//                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.normal);
+//                            break;
+//                        case "Hard":
+//                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.hard);
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//                } else {
+//
+//                    Toast.makeText(context, "Update fail", Toast.LENGTH_SHORT).show();
+//                }
+//                holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
 
-                        case "Easy":
-                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.easy);
-                            break;
-                        case "Normal":
-                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.normal);
-                            break;
-                        case "Hard":
-                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.hard);
-                            break;
-                        default:
-                            break;
+                //set status firebase
+                database.collection("todos").document(todoDTO.getId()).update("status", 0)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(context, "Update success", Toast.LENGTH_SHORT).show();
+                                holder.tvTitle.setTextColor(context.getResources().getColor(R.color.black));
+                                switch (todoDTO.getType()) {
+
+                                    case "Easy":
+                                        holder.constraintLayoutItem.setBackgroundResource(R.drawable.easy);
+                                        break;
+                                    case "Normal":
+                                        holder.constraintLayoutItem.setBackgroundResource(R.drawable.normal);
+                                        break;
+                                    case "Hard":
+                                        holder.constraintLayoutItem.setBackgroundResource(R.drawable.hard);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, "Update fail", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-
-                    Toast.makeText(context, "Update fail", Toast.LENGTH_SHORT).show();
-                }
-                holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                });
             } else {
-                todoDTO.setStatus(1);
-                todoDAO = new TodoDAO(context);
-                int result = todoDAO.updateStatus(todoDTO);
-                if (result > 0) {
-                    holder.tvTitle.setTextColor(context.getResources().getColor(R.color.colorGray));
-                    switch (todoDTO.getType()) {
-                        case "Easy":
-                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.easydone);
-                            break;
-                        case "Normal":
-                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.normaldone);
-                            break;
-                        case "Hard":
-                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.harddone);
-                            break;
-                        default:
-                            break;
-                    }
+//                todoDTO.setStatus(1);
+//                todoDAO = new TodoDAO(context);
+//                int result = todoDAO.updateStatus(todoDTO);
+//                if (result > 0) {
+//                    holder.tvTitle.setTextColor(context.getResources().getColor(R.color.colorGray));
+//                    switch (todoDTO.getType()) {
+//                        case "Easy":
+//                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.easydone);
+//                            break;
+//                        case "Normal":
+//                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.normaldone);
+//                            break;
+//                        case "Hard":
+//                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.harddone);
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//
+//                    Toast.makeText(context, "Update success", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(context, "Update fail", Toast.LENGTH_SHORT).show();
+//                }
+//                holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-                    Toast.makeText(context, "Update success", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Update fail", Toast.LENGTH_SHORT).show();
-                }
-                holder.tvTitle.setPaintFlags(holder.tvTitle.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    //set status firebase
+                    database.collection("todos").document(todoDTO.getId()).update("status", 1)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    holder.tvTitle.setTextColor(context.getResources().getColor(R.color.colorGray));
+                                    switch (todoDTO.getType()) {
+                                        case "Easy":
+                                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.easydone);
+                                            break;
+                                        case "Normal":
+                                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.normaldone);
+                                            break;
+                                        case "Hard":
+                                            holder.constraintLayoutItem.setBackgroundResource(R.drawable.harddone);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+
+                                    Toast.makeText(context, "Update success", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Toast.makeText(context, "Update fail", Toast.LENGTH_SHORT).show();
+                        }
+                    });
             }
             holder.rbTodo.setChecked(todoDTO.getStatus() == 1);
         });
@@ -167,15 +232,31 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {
                     .setPositiveButtonText("Yes", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            todoDAO = new TodoDAO(context);
-                            int result = todoDAO.delete(todoDTO);
-                            if (result > 0) {
-                                Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show();
-                                todoDTOArrayList.remove(position);
-                                notifyDataSetChanged();
-                            } else {
-                                Toast.makeText(context, "Delete fail", Toast.LENGTH_SHORT).show();
-                            }
+//                            todoDAO = new TodoDAO(context);
+//                            int result = todoDAO.delete(todoDTO);
+//                            if (result > 0) {
+//                                Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show();
+//                                todoDTOArrayList.remove(position);
+//                                notifyDataSetChanged();
+//                            } else {
+//                                Toast.makeText(context, "Delete fail", Toast.LENGTH_SHORT).show();
+//                            }
+                            Toast.makeText(context, todoDTO.getId() +"", Toast.LENGTH_SHORT).show();
+                            //delete from firebase
+                            database.collection("todos").document(todoDTO.getId()).delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(context, "Delete success", Toast.LENGTH_SHORT).show();
+                                            notifyDataSetChanged();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(context, "Delete fail", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                         }
                     })
                     .show();

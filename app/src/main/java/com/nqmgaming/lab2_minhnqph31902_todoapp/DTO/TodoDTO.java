@@ -1,7 +1,10 @@
 package com.nqmgaming.lab2_minhnqph31902_todoapp.DTO;
 
+import java.util.HashMap;
+import java.util.Objects;
+
 public class TodoDTO {
-    private int id;
+    private String id;
     private String title;
     private String description;
     private String date;
@@ -11,7 +14,8 @@ public class TodoDTO {
     public TodoDTO() {
     }
 
-    public TodoDTO( String title, String description, String date,String type, int status) {
+    public TodoDTO(String id,String title, String description, String date, String type, int status) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.date = date;
@@ -19,11 +23,11 @@ public class TodoDTO {
         this.status = status;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -65,5 +69,29 @@ public class TodoDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    //hashmap
+   public HashMap<String, Object> toHashMap() {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("id", id);
+        hashMap.put("title", title);
+        hashMap.put("description", description);
+        hashMap.put("date", date);
+        hashMap.put("type", type);
+        hashMap.put("status", status);
+        return hashMap;
+    }
+
+    @Override
+    public String toString() {
+        return "TodoDTO{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", date='" + date + '\'' +
+                ", type='" + type + '\'' +
+                ", status=" + status +
+                '}';
     }
 }

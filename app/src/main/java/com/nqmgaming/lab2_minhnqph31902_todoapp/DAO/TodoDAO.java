@@ -33,7 +33,7 @@ public class TodoDAO {
             contentValues.put("type", todoDTO.getType());
             contentValues.put("status", todoDTO.getStatus());
             result = sqLiteDatabase.insert("todo", null, contentValues);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -51,7 +51,7 @@ public class TodoDAO {
             contentValues.put("status", todoDTO.getStatus());
             String[] condition = new String[]{String.valueOf(todoDTO.getId())};
             result = sqLiteDatabase.update("todo", contentValues, "id = ?", condition);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -63,7 +63,7 @@ public class TodoDAO {
         try {
             String[] condition = new String[]{String.valueOf(todoDTO.getId())};
             result = sqLiteDatabase.delete("todo", "id = ?", condition);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -74,7 +74,7 @@ public class TodoDAO {
         int result = -1;
         try {
             result = sqLiteDatabase.delete("todo", null, null);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -89,7 +89,7 @@ public class TodoDAO {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     TodoDTO todoDTO = new TodoDTO();
-                    todoDTO.setId(cursor.getInt(0));
+                    todoDTO.setId(cursor.getString(0));
                     todoDTO.setTitle(cursor.getString(1));
                     todoDTO.setDescription(cursor.getString(2));
                     todoDTO.setDate(cursor.getString(3));
@@ -98,7 +98,7 @@ public class TodoDAO {
                     todoDTOArrayList.add(todoDTO);
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return todoDTOArrayList;
@@ -112,7 +112,7 @@ public class TodoDAO {
             contentValues.put("status", todoDTO.getStatus());
             String[] condition = new String[]{String.valueOf(todoDTO.getId())};
             result = sqLiteDatabase.update("todo", contentValues, "id = ?", condition);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -126,7 +126,7 @@ public class TodoDAO {
             Cursor cursor = sqLiteDatabase.rawQuery(sql, null);
             if (cursor != null) {
                 while (cursor.moveToNext()) {
-                    todoDTO.setId(cursor.getInt(0));
+                    todoDTO.setId(cursor.getString(0));
                     todoDTO.setTitle(cursor.getString(1));
                     todoDTO.setDescription(cursor.getString(2));
                     todoDTO.setDate(cursor.getString(3));
@@ -134,7 +134,7 @@ public class TodoDAO {
                     todoDTO.setStatus(cursor.getInt(5));
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return todoDTO;
