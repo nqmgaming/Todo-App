@@ -179,30 +179,6 @@ public class AddTodoActivity extends AppCompatActivity {
                         })
                         .addOnFailureListener(e -> Toast.makeText(AddTodoActivity.this, "Add failed", Toast.LENGTH_SHORT).show());
 
-//                todoDAO = new TodoDAO(AddTodoActivity.this);
-//                long result = todoDAO.insert(todoDTO);
-//                if (result > 0) {
-//                    new CuteDialog.withAnimation(this)
-//                            .setAnimation(R.raw.successfull)
-//                            .setTitle("Add successfully")
-//                            .setDescription("Let's try your best to complete it!")
-//                            .setTitleTextColor(R.color.black)
-//                            .hideNegativeButton(true)
-//                            .setPositiveButtonText("OK", new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
-//                                    intentToMain.putExtra("isAdd", true);
-//                                    startActivity(intentToMain);
-//                                    finish();
-//                                }
-//                            })
-//                            .show();
-//
-//
-//                } else {
-//                    Toast.makeText(AddTodoActivity.this, "Add failed", Toast.LENGTH_SHORT).show();
-//                }
             } catch (Exception e) {
                 // Xử lý ngoại lệ ở đây
                 e.printStackTrace();

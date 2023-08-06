@@ -53,11 +53,17 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerViewTodo.setLayoutManager(linearLayoutManager);
 
-// Initialize todoArrayList before using it in the TodoAdapter
-        todoArrayList = new ArrayList<>();
+        todoDAO = new TodoDAO(this);
+        todoArrayList = todoDAO.getAll();
         todoAdapter = new TodoAdapter(this, todoArrayList);
         recyclerViewTodo.setAdapter(todoAdapter);
 
+//        Intent intent = getIntent();
+//        boolean isAdd = intent.getBooleanExtra("isAdd", false);
+//        boolean isEdit = intent.getBooleanExtra("isEdit", false);
+//        if (isAdd || isEdit) {
+//            refreshList();
+//        }
 
 
         fabAdd.setOnClickListener(v -> {
@@ -67,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
+//    private void refreshList() {
+//        todoArrayList.clear();
+//        todoArrayList.addAll(todoDAO.getAll());
+//        todoAdapter.notifyDataSetChanged();
+//    }
 
     @Override
     public void onBackPressed() {
