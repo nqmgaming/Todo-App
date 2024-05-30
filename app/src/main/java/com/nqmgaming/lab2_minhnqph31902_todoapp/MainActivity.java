@@ -3,18 +3,12 @@ package com.nqmgaming.lab2_minhnqph31902_todoapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.adapter.TodoAdapter;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.dao.TodoDAO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.dto.TodoDTO;
@@ -27,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<TodoDTO> todoArrayList;
     static TodoDAO todoDAO;
     FloatingActionButton fabAdd;
-
     FirebaseFirestore database;
 
     private long backPressedTime; // Variable to track the last back button press time
@@ -52,14 +45,6 @@ public class MainActivity extends AppCompatActivity {
         todoAdapter = new TodoAdapter(this, todoArrayList);
         recyclerViewTodo.setAdapter(todoAdapter);
 
-//        Intent intent = getIntent();
-//        boolean isAdd = intent.getBooleanExtra("isAdd", false);
-//        boolean isEdit = intent.getBooleanExtra("isEdit", false);
-//        if (isAdd || isEdit) {
-//            refreshList();
-//        }
-
-
         fabAdd.setOnClickListener(v -> {
             Intent intent1 = new Intent(MainActivity.this, AddTodoActivity.class);
             startActivity(intent1);
@@ -67,18 +52,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    private void refreshList() {
-//        todoArrayList.clear();
-//        todoArrayList.addAll(todoDAO.getAll());
-//        todoAdapter.notifyDataSetChanged();
-//    }
-
     @Override
     public void onBackPressed() {
         // Check if enough time has passed since the last back button press
         if (backPressedTime + DOUBLE_BACK_PRESS_TIMEOUT > System.currentTimeMillis()) {
             // If within the timeout duration, exit the app
-            super.onBackPressed();
+            getOnBackPressedDispatcher().onBackPressed();
         } else {
             // If not within the timeout duration, show a toast message
             Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
@@ -88,37 +67,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ListenFirebaseStore() {
-        database.collection("todos").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    return;
-                }
-                if (value != null) {
-                    for (DocumentChange dc : value.getDocumentChanges()) {
-                        switch (dc.getType()) {
-                            case ADDED:
-                                dc.getDocument().toObject(TodoDTO.class);
-                                todoArrayList.add(dc.getDocument().toObject(TodoDTO.class));
-                                todoAdapter.notifyItemInserted(todoArrayList.size() - 1);
-                                break;
-                            case MODIFIED:
-                                TodoDTO todoDTO = dc.getDocument().toObject(TodoDTO.class);
-                                if (dc.getOldIndex() == dc.getNewIndex()) {
-                                    todoArrayList.set(dc.getOldIndex(), todoDTO);
-                                    todoAdapter.notifyItemChanged(dc.getOldIndex());
-                                } else {
-                                    todoArrayList.remove(dc.getOldIndex());
-                                    todoArrayList.add(dc.getNewIndex(), todoDTO);
-                                    todoAdapter.notifyItemMoved(dc.getOldIndex(), dc.getNewIndex());
-                                }
-                                break;
-                            case REMOVED:
-                                dc.getDocument().toObject(TodoDTO.class);
+        database.collection("todos").addSnapshotListener((value, error) -> {
+            if (error != null) {
+                return;
+            }
+            if (value != null) {
+                for (DocumentChange dc : value.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            dc.getDocument().toObject(TodoDTO.class);
+                            todoArrayList.add(dc.getDocument().toObject(TodoDTO.class));
+                            todoAdapter.notifyItemInserted(todoArrayList.size() - 1);
+                            break;
+                        case MODIFIED:
+                            TodoDTO todoDTO = dc.getDocument().toObject(TodoDTO.class);
+                            if (dc.getOldIndex() == dc.getNewIndex()) {
+                                todoArrayList.set(dc.getOldIndex(), todoDTO);
+                                todoAdapter.notifyItemChanged(dc.getOldIndex());
+                            } else {
                                 todoArrayList.remove(dc.getOldIndex());
-                                todoAdapter.notifyItemRemoved(dc.getOldIndex());
-                                break;
-                        }
+                                todoArrayList.add(dc.getNewIndex(), todoDTO);
+                                todoAdapter.notifyItemMoved(dc.getOldIndex(), dc.getNewIndex());
+                            }
+                            break;
+                        case REMOVED:
+                            dc.getDocument().toObject(TodoDTO.class);
+                            todoArrayList.remove(dc.getOldIndex());
+                            todoAdapter.notifyItemRemoved(dc.getOldIndex());
+                            break;
                     }
                 }
             }

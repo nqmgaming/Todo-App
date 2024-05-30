@@ -5,22 +5,17 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.dao.TodoDAO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.dto.TodoDTO;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,7 +29,6 @@ public class AddTodoActivity extends AppCompatActivity {
     TextInputLayout tilDate;
     Button btnAdd, btnCancel;
     ImageView btnBack;
-    TodoDAO todoDAO;
     ConstraintLayout rootView;
     FirebaseFirestore database;
 
@@ -94,9 +88,7 @@ public class AddTodoActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        btnBack.setOnClickListener(v -> {
-            getOnBackPressedDispatcher().onBackPressed();
-        });
+        btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
         btnAdd.setOnClickListener(v -> {
             try {
@@ -150,24 +142,19 @@ public class AddTodoActivity extends AppCompatActivity {
 
                 database.collection("todos").document(idRandom)
                         .set(mapTodo)
-                        .addOnSuccessListener(aVoid -> {
-                            new CuteDialog.withAnimation(this)
-                                    .setAnimation(R.raw.successfull)
-                                    .setTitle("Add successfully")
-                                    .setDescription("Let's try your best to complete it!")
-                                    .setTitleTextColor(R.color.black)
-                                    .hideNegativeButton(true)
-                                    .setPositiveButtonText("OK", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
-                                            intentToMain.putExtra("isAdd", true);
-                                            startActivity(intentToMain);
-                                            finish();
-                                        }
-                                    })
-                                    .show();
-                        })
+                        .addOnSuccessListener(aVoid -> new CuteDialog.withAnimation(this)
+                                .setAnimation(R.raw.successfull)
+                                .setTitle("Add successfully")
+                                .setDescription("Let's try your best to complete it!")
+                                .setTitleTextColor(R.color.black)
+                                .hideNegativeButton(true)
+                                .setPositiveButtonText("OK", v1 -> {
+                                    Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
+                                    intentToMain.putExtra("isAdd", true);
+                                    startActivity(intentToMain);
+                                    finish();
+                                })
+                                .show())
                         .addOnFailureListener(e -> Toast.makeText(AddTodoActivity.this, "Add failed", Toast.LENGTH_SHORT).show());
 
             } catch (Exception e) {
@@ -175,9 +162,7 @@ public class AddTodoActivity extends AppCompatActivity {
             }
         });
 
-        btnCancel.setOnClickListener(v -> {
-            getOnBackPressedDispatcher().onBackPressed();
-        });
+        btnCancel.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
 
     }

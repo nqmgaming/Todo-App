@@ -74,6 +74,7 @@ public class EditTodoActivity extends AppCompatActivity {
         AtomicReference<TodoDTO> todoDTOReference = new AtomicReference<>(new TodoDTO());
 
         // Get data from Firebase
+        assert id != null;
         database.collection("todos").document(id).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
@@ -140,23 +141,19 @@ public class EditTodoActivity extends AppCompatActivity {
 
                 // Update to Firebase
                 database.collection("todos").document(id).update(mapTodo)
-                        .addOnSuccessListener(aVoid -> {
-                            new CuteDialog.withAnimation(EditTodoActivity.this)
-                                    .setAnimation(R.raw.successfull)
-                                    .setTitle("Update successfully")
-                                    .setDescription("You have updated successfully")
-                                    .hidePositiveButton(true)
-                                    .setNegativeButtonText("OK", v1 -> {
-                                        Intent intentToMain = new Intent(EditTodoActivity.this, MainActivity.class);
-                                        intentToMain.putExtra("isEdit", true);
-                                        startActivity(intentToMain);
-                                        finish();
-                                    })
-                                    .show();
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(EditTodoActivity.this, "Update failed", Toast.LENGTH_SHORT).show();
-                        });
+                        .addOnSuccessListener(aVoid -> new CuteDialog.withAnimation(EditTodoActivity.this)
+                                .setAnimation(R.raw.successfull)
+                                .setTitle("Update successfully")
+                                .setDescription("You have updated successfully")
+                                .hidePositiveButton(true)
+                                .setNegativeButtonText("OK", v1 -> {
+                                    Intent intentToMain = new Intent(EditTodoActivity.this, MainActivity.class);
+                                    intentToMain.putExtra("isEdit", true);
+                                    startActivity(intentToMain);
+                                    finish();
+                                })
+                                .show())
+                        .addOnFailureListener(e -> Toast.makeText(EditTodoActivity.this, "Update failed", Toast.LENGTH_SHORT).show());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -176,12 +173,8 @@ public class EditTodoActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        ivBackEdit.setOnClickListener(v -> {
-            getOnBackPressedDispatcher().onBackPressed();
-        });
+        ivBackEdit.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
-        btnCancelEdit.setOnClickListener(v -> {
-            getOnBackPressedDispatcher().onBackPressed();
-        });
+        btnCancelEdit.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
     }
 }

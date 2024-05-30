@@ -1,5 +1,7 @@
 package com.nqmgaming.lab2_minhnqph31902_todoapp.dto;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashMap;
 
 public class TodoDTO {
@@ -82,6 +84,7 @@ public class TodoDTO {
         return hashMap;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "TodoDTO{" +
