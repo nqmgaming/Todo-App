@@ -1,4 +1,4 @@
-package com.nqmgaming.lab2_minhnqph31902_todoapp.DataBase;
+package com.nqmgaming.lab2_minhnqph31902_todoapp.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

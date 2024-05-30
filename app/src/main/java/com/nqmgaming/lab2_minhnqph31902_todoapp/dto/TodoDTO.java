@@ -1,7 +1,6 @@
-package com.nqmgaming.lab2_minhnqph31902_todoapp.DTO;
+package com.nqmgaming.lab2_minhnqph31902_todoapp.dto;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 public class TodoDTO {
     private String id;

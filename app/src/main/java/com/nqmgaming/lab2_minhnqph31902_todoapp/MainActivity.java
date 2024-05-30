@@ -15,17 +15,11 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.Adapter.TodoAdapter;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.adapter.TodoAdapter;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.dao.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.dto.TodoDTO;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
-import nl.dionsegijn.konfetti.core.Party;
-import nl.dionsegijn.konfetti.core.emitter.Emitter;
-import nl.dionsegijn.konfetti.core.emitter.EmitterConfig;
-import nl.dionsegijn.konfetti.xml.KonfettiView;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerViewTodo;

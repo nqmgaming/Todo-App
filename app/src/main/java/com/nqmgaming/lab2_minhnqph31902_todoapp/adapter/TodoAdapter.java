@@ -1,4 +1,4 @@
-package com.nqmgaming.lab2_minhnqph31902_todoapp.Adapter;
+package com.nqmgaming.lab2_minhnqph31902_todoapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,20 +20,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.dao.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.dto.TodoDTO;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.EditTodoActivity;
 import com.nqmgaming.lab2_minhnqph31902_todoapp.R;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import io.github.cutelibs.cutedialog.CuteDialog;
-import nl.dionsegijn.konfetti.core.PartyFactory;
-import nl.dionsegijn.konfetti.core.emitter.Emitter;
-import nl.dionsegijn.konfetti.core.emitter.EmitterConfig;
-import nl.dionsegijn.konfetti.core.models.Shape;
-import nl.dionsegijn.konfetti.core.models.Size;
 import nl.dionsegijn.konfetti.xml.KonfettiView;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.ViewHolder> {

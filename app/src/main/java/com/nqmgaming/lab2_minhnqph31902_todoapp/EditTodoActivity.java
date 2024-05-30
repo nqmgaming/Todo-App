@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.dto.TodoDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

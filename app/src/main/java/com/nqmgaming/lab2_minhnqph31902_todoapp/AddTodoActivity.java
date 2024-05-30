@@ -3,29 +3,23 @@ package com.nqmgaming.lab2_minhnqph31902_todoapp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DAO.TodoDAO;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.dao.TodoDAO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.dto.TodoDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,7 +36,6 @@ public class AddTodoActivity extends AppCompatActivity {
     ImageView btnBack;
     TodoDAO todoDAO;
     ConstraintLayout rootView;
-
     FirebaseFirestore database;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -180,7 +173,6 @@ public class AddTodoActivity extends AppCompatActivity {
                         .addOnFailureListener(e -> Toast.makeText(AddTodoActivity.this, "Add failed", Toast.LENGTH_SHORT).show());
 
             } catch (Exception e) {
-                // Xử lý ngoại lệ ở đây
                 e.printStackTrace();
             }
         });
@@ -193,6 +185,5 @@ public class AddTodoActivity extends AppCompatActivity {
 
 
     }
-    //onPause
 
 }

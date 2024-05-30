@@ -1,12 +1,12 @@
-package com.nqmgaming.lab2_minhnqph31902_todoapp.DAO;
+package com.nqmgaming.lab2_minhnqph31902_todoapp.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DTO.TodoDTO;
-import com.nqmgaming.lab2_minhnqph31902_todoapp.DataBase.DataBaseTodoHelper;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.dto.TodoDTO;
+import com.nqmgaming.lab2_minhnqph31902_todoapp.database.DataBaseTodoHelper;
 
 import java.util.ArrayList;
 
