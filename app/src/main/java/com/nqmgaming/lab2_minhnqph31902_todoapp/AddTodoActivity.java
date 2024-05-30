@@ -95,9 +95,7 @@ public class AddTodoActivity extends AppCompatActivity {
         });
 
         btnBack.setOnClickListener(v -> {
-            Intent intentToMain = new Intent(AddTodoActivity.this, MainActivity.class);
-            startActivity(intentToMain);
-            finish();
+            getOnBackPressedDispatcher().onBackPressed();
         });
 
         btnAdd.setOnClickListener(v -> {
@@ -178,9 +176,7 @@ public class AddTodoActivity extends AppCompatActivity {
         });
 
         btnCancel.setOnClickListener(v -> {
-            Intent intent = new Intent(AddTodoActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            getOnBackPressedDispatcher().onBackPressed();
         });
 
 

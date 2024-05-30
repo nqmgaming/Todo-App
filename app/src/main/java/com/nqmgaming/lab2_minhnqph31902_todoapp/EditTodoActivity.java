@@ -177,15 +177,11 @@ public class EditTodoActivity extends AppCompatActivity {
         });
 
         ivBackEdit.setOnClickListener(v -> {
-            Intent intentToMain = new Intent(EditTodoActivity.this, MainActivity.class);
-            startActivity(intentToMain);
-            finish();
+            getOnBackPressedDispatcher().onBackPressed();
         });
 
         btnCancelEdit.setOnClickListener(v -> {
-            Intent intentToMain = new Intent(EditTodoActivity.this, MainActivity.class);
-            startActivity(intentToMain);
-            finish();
+            getOnBackPressedDispatcher().onBackPressed();
         });
     }
 }
